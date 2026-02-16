@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Text
+from sqlalchemy import Column, Integer, String, Date, Text, Boolean
 from database import Base
 
 class Trade(Base):
@@ -10,6 +10,11 @@ class Trade(Base):
     status = Column(String, default="交渉中")
     give_item = Column(String)
     get_item = Column(String)
+    # ★追加：画像URLと公開フラグ
+    give_image_url = Column(String, nullable=True)
+    get_image_url = Column(String, nullable=True)
+    is_public = Column(Boolean, default=False) 
+    
     shipping_date = Column(Date, nullable=True)
     tracking_number = Column(String, nullable=True)
     memo = Column(Text, nullable=True)
