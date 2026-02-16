@@ -3,50 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>取引詳細・編集</title>
+    <title>Edit Trade</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #fdf6f9; font-family: 'M PLUS Rounded 1c', sans-serif; color: #5e5e5e; }
+        .form-container { background: white; padding: 2.5rem; border-radius: 30px; box-shadow: 0 10px 30px rgba(255,182,193,0.15); }
+        .form-control, .form-select { border-radius: 15px; border: 1px solid #ffe4ed; padding: 12px; }
+        .btn-primary { background-color: #ffb6c1; border: none; border-radius: 25px; padding: 12px; font-weight: bold; width: 100%; }
+        .template-box { background-color: #fff9fb; border: 1px dashed #ffb6c1; border-radius: 20px; padding: 20px; }
+    </style>
 </head>
 <body>
-<div class="container mt-5" style="max-width: 600px;">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>📝 取引詳細・編集</h2>
-        <a href="/delete/{{ trade.id }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('本当に削除しますか？');">削除</a>
+<div class="container py-5" style="max-width: 500px;">
+    <div class="form-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="h5 fw-bold m-0" style="color: #ff99aa;">📝 Detail</h3>
+            <a href="/delete/{{ trade.id }}" class="btn btn-link text-danger text-decoration-none small" onclick="return confirm('削除しますか？');">Delete</a>
+        </div>
+        <form action="/update/{{ trade.id }}" method="post">
+            <div class="mb-3"><label class="small fw-bold">Twitter ID</label><input type="text" name="partner_name" class="form-control" value="{{ trade.partner_name }}"></div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <label class="small fw-bold">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="交渉中" {% if trade.status == '交渉中' %}selected{% endif %}>交渉中</option>
+                        <option value="発送待ち" {% if trade.status == '発送待ち' %}selected{% endif %}>発送待ち</option>
+                        <option value="受取待ち" {% if trade.status == '受取待ち' %}selected{% endif %}>受取待ち</option>
+                        <option value="完了" {% if trade.status == '完了' %}selected{% endif %}>完了</option>
+                    </select>
+                </div>
+                <div class="col-6"><label class="small fw-bold">Tracking</label><input type="text" name="tracking_number" class="form-control" value="{{ trade.tracking_number or '' }}"></div>
+            </div>
+            <div class="mb-4"><label class="small fw-bold">Memo</label><textarea name="memo" class="form-control" rows="3">{{ trade.memo or '' }}</textarea></div>
+            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
+            <div class="text-center"><a href="/" class="small text-muted text-decoration-none">Back to list</a></div>
+        </form>
+
+        <div class="template-box mt-4">
+            <h6 class="fw-bold mb-2" style="color: #ff99aa;">🎀 Shipping Template</h6>
+            <textarea id="tempText" class="form-control border-0 bg-white small mb-2" rows="4" readonly>お世話になっております、{{ user.name }}です。🐰
+本日、トレカの発送が完了いたしました。
+【追跡番号：{{ trade.tracking_number or '未入力' }}】
+無事に届きますように💌</textarea>
+            <button onclick="copyMsg()" class="btn btn-sm btn-outline-secondary w-100 rounded-pill">Copy Message</button>
+        </div>
     </div>
-    <form action="/update/{{ trade.id }}" method="post">
-        <div class="mb-3">
-            <label class="form-label">相手の名前</label>
-            <input type="text" name="partner_name" class="form-control" value="{{ trade.partner_name }}" required>
-        </div>
-        <div class="row">
-            <div class="col-6 mb-3">
-                <label class="form-label">譲</label>
-                <input type="text" name="give_item" class="form-control" value="{{ trade.give_item or '' }}">
-            </div>
-            <div class="col-6 mb-3">
-                <label class="form-label">求</label>
-                <input type="text" name="get_item" class="form-control" value="{{ trade.get_item or '' }}">
-            </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">ステータス</label>
-            <select name="status" class="form-select">
-                <option value="交渉中" {% if trade.status == '交渉中' %}selected{% endif %}>交渉中</option>
-                <option value="発送待ち" {% if trade.status == '発送待ち' %}selected{% endif %}>発送待ち</option>
-                <option value="受取待ち" {% if trade.status == '受取待ち' %}selected{% endif %}>受取待ち</option>
-                <option value="完了" {% if trade.status == '完了' %}selected{% endif %}>完了</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">追跡番号</label>
-            <input type="text" name="tracking_number" class="form-control" value="{{ trade.tracking_number or '' }}">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">メモ</label>
-            <textarea name="memo" class="form-control" rows="5">{{ trade.memo or '' }}</textarea>
-        </div>
-        <button type="submit" class="btn btn-success w-100">保存する</button>
-        <a href="/" class="btn btn-link w-100 mt-2">戻る</a>
-    </form>
 </div>
+
+<script>
+function copyMsg() {
+    var copyText = document.getElementById("tempText");
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+    alert("コピーしました！LINEやXで送ってね💌");
+}
+</script>
 </body>
 </html>
