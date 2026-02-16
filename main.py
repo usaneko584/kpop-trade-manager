@@ -26,7 +26,6 @@ async def startup():
 def get_user(request: Request):
     return request.session.get("user")
 
-# --- メイン一覧 ---
 @app.get("/")
 async def read_root(request: Request, search: str = None, db: AsyncSession = Depends(get_db)):
     user = get_user(request)
@@ -38,50 +37,12 @@ async def read_root(request: Request, search: str = None, db: AsyncSession = Dep
     trades = result.scalars().all()
     return templates.TemplateResponse("index.html", {"request": request, "trades": trades, "user": user, "search": search})
 
-# --- 公開リスト（誰でも見れるページ） ---
 @app.get("/public/{user_id}")
 async def public_list(user_id: str, db: AsyncSession = Depends(get_db)):
-    # 公開設定（is_public=True）になっているものだけを表示
     result = await db.execute(select(Trade).where(Trade.user_id == user_id, Trade.is_public == True).order_by(Trade.id.desc()))
     trades = result.scalars().all()
     return templates.TemplateResponse("public_list.html", {"trades": trades})
 
-# --- 新規作成 ---
-@app.post("/create")
-async def create_trade(
-    request: Request, partner_name: str = Form(...), give_item: str = Form(None), 
-    get_item: str = Form(None), give_image_url: str = Form(None), get_image_url: str = Form(None),
-    status: str = Form(...), memo: str = Form(None), is_public: bool = Form(False), db: AsyncSession = Depends(get_db)
-):
-    user = get_user(request)
-    if user:
-        new_trade = Trade(
-            user_id=user["user_id"], partner_name=partner_name, give_item=give_item, 
-            get_item=get_item, give_image_url=give_image_url, get_image_url=get_image_url,
-            status=status, memo=memo, is_public=is_public
-        )
-        db.add(new_trade); await db.commit()
-    return RedirectResponse(url="/", status_code=303)
-
-# --- 更新 ---
-@app.post("/update/{trade_id}")
-async def update_trade(
-    trade_id: int, request: Request, partner_name: str = Form(...), status: str = Form(...), 
-    give_item: str = Form(None), get_item: str = Form(None),
-    give_image_url: str = Form(None), get_image_url: str = Form(None),
-    tracking_number: str = Form(None), memo: str = Form(None), is_public: bool = Form(False), db: AsyncSession = Depends(get_db)
-):
-    user = get_user(request)
-    result = await db.execute(select(Trade).where(Trade.id == trade_id, Trade.user_id == user["user_id"]))
-    trade = result.scalars().first()
-    if trade:
-        trade.partner_name = partner_name; trade.status = status; trade.give_item = give_item; trade.get_item = get_item
-        trade.give_image_url = give_image_url; trade.get_image_url = get_image_url
-        trade.tracking_number = tracking_number; trade.memo = memo; trade.is_public = is_public
-        await db.commit()
-    return RedirectResponse(url="/", status_code=303)
-
-# --- (以下、既存のlogin, callback, logout, detail, delete, terms, about はそのまま) ---
 @app.get("/login")
 async def login_gate():
     url = f"https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={LINE_CHANNEL_ID}&redirect_uri={LINE_REDIRECT_URI}&state=random_state&scope=profile%20openid"
@@ -90,10 +51,7 @@ async def login_gate():
 @app.get("/callback")
 async def callback(request: Request, code: str):
     async with httpx.AsyncClient() as client:
-        token_res = await client.post("https://api.line.me/oauth2/v2.1/token", data={
-            "grant_type": "authorization_code", "code": code, "redirect_uri": LINE_REDIRECT_URI,
-            "client_id": LINE_CHANNEL_ID, "client_secret": LINE_CHANNEL_SECRET
-        })
+        token_res = await client.post("https://api.line.me/oauth2/v2.1/token", data={"grant_type": "authorization_code", "code": code, "redirect_uri": LINE_REDIRECT_URI, "client_id": LINE_CHANNEL_ID, "client_secret": LINE_CHANNEL_SECRET})
         profile_res = await client.get("https://api.line.me/v2/profile", headers={"Authorization": f"Bearer {token_res.json()['access_token']}"})
         profile = profile_res.json()
         request.session["user"] = {"user_id": profile["userId"], "name": profile["displayName"], "picture": profile.get("pictureUrl")}
@@ -110,6 +68,14 @@ async def show_create(request: Request):
     if not user: return RedirectResponse(url="/")
     return templates.TemplateResponse("create.html", {"request": request, "user": user})
 
+@app.post("/create")
+async def create_trade(request: Request, partner_name: str = Form(...), give_item: str = Form(None), get_item: str = Form(None), give_image_url: str = Form(None), get_image_url: str = Form(None), status: str = Form(...), memo: str = Form(None), is_public: bool = Form(False), db: AsyncSession = Depends(get_db)):
+    user = get_user(request)
+    if user:
+        new_trade = Trade(user_id=user["user_id"], partner_name=partner_name, give_item=give_item, get_item=get_item, give_image_url=give_image_url, get_image_url=get_image_url, status=status, memo=memo, is_public=is_public)
+        db.add(new_trade); await db.commit()
+    return RedirectResponse(url="/", status_code=303)
+
 @app.get("/detail/{trade_id}")
 async def show_detail(trade_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     user = get_user(request)
@@ -117,6 +83,17 @@ async def show_detail(trade_id: int, request: Request, db: AsyncSession = Depend
     result = await db.execute(select(Trade).where(Trade.id == trade_id, Trade.user_id == user["user_id"]))
     trade = result.scalars().first()
     return templates.TemplateResponse("detail.html", {"request": request, "trade": trade, "user": user})
+
+@app.post("/update/{trade_id}")
+async def update_trade(trade_id: int, request: Request, partner_name: str = Form(...), status: str = Form(...), give_item: str = Form(None), get_item: str = Form(None), give_image_url: str = Form(None), get_image_url: str = Form(None), tracking_number: str = Form(None), memo: str = Form(None), is_public: bool = Form(False), db: AsyncSession = Depends(get_db)):
+    user = get_user(request)
+    result = await db.execute(select(Trade).where(Trade.id == trade_id, Trade.user_id == user["user_id"]))
+    trade = result.scalars().first()
+    if trade:
+        trade.partner_name = partner_name; trade.status = status; trade.give_item = give_item; trade.get_item = get_item
+        trade.give_image_url = give_image_url; trade.get_image_url = get_image_url; trade.tracking_number = tracking_number; trade.memo = memo; trade.is_public = is_public
+        await db.commit()
+    return RedirectResponse(url="/", status_code=303)
 
 @app.get("/delete/{trade_id}")
 async def delete_trade(trade_id: int, request: Request, db: AsyncSession = Depends(get_db)):
