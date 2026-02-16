@@ -19,14 +19,14 @@ if DATABASE_URL.startswith("postgres://"):
 elif DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
-# エンジンの作成
+# エンジン作成部分（ここはそのまま、statement_cache_sizeが入っていることを確認）
 engine = create_async_engine(
     DATABASE_URL, 
     echo=True,
     pool_pre_ping=True,
     connect_args={
         "command_timeout": 30,
-        "statement_cache_size": 0  # ←これがポート6543には必須！
+        "statement_cache_size": 0  # ← ポート6543にはこれが絶対必要！
     }
 )
 
