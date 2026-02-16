@@ -5,7 +5,6 @@ class Trade(Base):
     __tablename__ = "trades"
 
     id = Column(Integer, primary_key=True, index=True)
-    # ★追加：LINEのユーザーIDを保存する列
     user_id = Column(String, index=True, nullable=False) 
     partner_name = Column(String, nullable=False)
     status = Column(String, default="交渉中")
