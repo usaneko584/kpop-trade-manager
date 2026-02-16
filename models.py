@@ -3,6 +3,9 @@ from database import Base
 
 class Trade(Base):
     __tablename__ = "trades"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, index=True)  # ★誰のデータか保存する列を追加
+    partner_name = Column(String, nullable=False)
 
     id = Column(Integer, primary_key=True, index=True)
     partner_name = Column(String, nullable=False)
