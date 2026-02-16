@@ -11,8 +11,7 @@ from database import get_db, engine, Base
 from models import Trade
 
 app = FastAPI()
-# 秘密鍵はセッション管理に使用されます
-app.add_middleware(SessionMiddleware, secret_key="kpop_trade_manager_secure_key")
+app.add_middleware(SessionMiddleware, secret_key="rena_kpop_manager_secure")
 templates = Jinja2Templates(directory="templates")
 
 LINE_CHANNEL_ID = os.environ.get("LINE_CHANNEL_ID")
@@ -57,15 +56,10 @@ async def callback(request: Request, code: str):
             "grant_type": "authorization_code", "code": code, "redirect_uri": LINE_REDIRECT_URI,
             "client_id": LINE_CHANNEL_ID, "client_secret": LINE_CHANNEL_SECRET
         })
-        token_data = token_res.json()
-        headers = {"Authorization": f"Bearer {token_data['access_token']}"}
+        headers = {"Authorization": f"Bearer {token_res.json()['access_token']}"}
         profile_res = await client.get("https://api.line.me/v2/profile", headers=headers)
         profile = profile_res.json()
-        request.session["user"] = {
-            "user_id": profile["userId"], 
-            "name": profile["displayName"], 
-            "picture": profile.get("pictureUrl")
-        }
+        request.session["user"] = {"user_id": profile["userId"], "name": profile["displayName"], "picture": profile.get("pictureUrl")}
     return RedirectResponse(url="/")
 
 @app.get("/logout")
@@ -118,3 +112,12 @@ async def delete_trade(trade_id: int, request: Request, db: AsyncSession = Depen
         await db.delete(trade)
         await db.commit()
     return RedirectResponse(url="/", status_code=303)
+
+# --- 規約・プロフィールページ ---
+@app.get("/terms")
+async def show_terms(request: Request):
+    return templates.TemplateResponse("terms.html", {"request": request, "user": get_user(request)})
+
+@app.get("/about")
+async def show_about(request: Request):
+    return templates.TemplateResponse("about.html", {"request": request, "user": get_user(request)})
