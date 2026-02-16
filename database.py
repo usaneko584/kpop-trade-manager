@@ -16,12 +16,15 @@ if DATABASE_URL.startswith("postgres://"):
 elif DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
-# エンジンの作成（タイムアウトを防ぐ設定を追加）
+# エンジンの作成
 engine = create_async_engine(
     DATABASE_URL, 
     echo=True,
-    pool_pre_ping=True,  # 接続が生きているか確認する
-    connect_args={"command_timeout": 30} # 30秒でタイムアウトさせる
+    pool_pre_ping=True,
+    connect_args={
+        "command_timeout": 30,
+        "statement_cache_size": 0  # ←これがポート6543には必須！
+    }
 )
 
 AsyncSessionLocal = sessionmaker(
