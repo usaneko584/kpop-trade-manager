@@ -9,8 +9,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL is None:
     DATABASE_URL = ""
 
-# ★ここが修正ポイント！
-# URLの先頭を「非同期用（postgresql+asyncpg://）」に強制的に書き換えます
+# ★ここが重要！見つけていただいた完璧な変換ロジックです
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL.startswith("postgresql://"):
