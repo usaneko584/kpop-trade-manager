@@ -8,7 +8,10 @@ from pathlib import Path
 env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# 修正前：DATABASE_URL = os.environ.get("DATABASE_URL")
+# ↓ 修正後（これをコピペしてください）
+
+DATABASE_URL = "postgresql://postgres:k7R0D8AmIrbQ8egW@db.loleqhlyenrbroqilgtk.supabase.co:6543/postgres"
 
 # URLの修正
 if DATABASE_URL.startswith("postgres://"):
