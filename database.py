@@ -2,21 +2,25 @@ import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# ★ここを「直接記入」から「環境変数の読み込み」に戻します
+# Vercelの環境変数からURLを取得
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# もしURLが postgres:// で始まっていたら postgresql:// に直す処理（念のため）
-if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+# URLがない場合の安全策（空文字を入れる）
+if DATABASE_URL is None:
+    DATABASE_URL = ""
+
+# "postgres://" で始まっていたら "postgresql://" に直す（SQLAlchemy用）
+if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# エンジン作成（statement_cache_size: 0 は残します！）
+# エンジン作成
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,
     pool_pre_ping=True,
     connect_args={
         "command_timeout": 30,
-        "statement_cache_size": 0  # ← ポート6543接続に必須
+        "statement_cache_size": 0  # ★重要：Supabase(Port 6543)にはこれが必須
     }
 )
 
