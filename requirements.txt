@@ -5,3 +5,4 @@ asyncpg
 python-dotenv
 jinja2
 aiofiles
+python-multipart
