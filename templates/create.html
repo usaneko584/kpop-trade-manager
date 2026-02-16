@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
     <style>
         body { background-color: #fdf6f9; font-family: 'M PLUS Rounded 1c', sans-serif; color: #5e5e5e; }
-        .form-container { background: white; padding: 2.5rem; border-radius: 30px; box-shadow: 0 10px 30px rgba(255,182,193,0.15); }
+        .form-container { background: white; padding: 2.5rem; border-radius: 30px; box-shadow: 0 10px 30px rgba(255, 182, 193, 0.15); }
         .form-control, .form-select { border-radius: 15px; border: 1px solid #ffe4ed; padding: 12px; }
         .btn-primary { background-color: #ffb6c1; border: none; border-radius: 25px; padding: 12px; font-weight: bold; width: 100%; }
     </style>
@@ -18,33 +18,10 @@
     <div class="form-container">
         <h3 class="h5 fw-bold mb-4 text-center" style="color: #ff99aa;">💌 New Trade</h3>
         <form action="/create" method="post">
-            <div class="mb-4">
-                <label class="small fw-bold">Twitter ID</label>
-                <input type="text" name="partner_name" class="form-control" placeholder="@" required>
-            </div>
-            <div class="row mb-4">
-                <div class="col-6">
-                    <label class="small fw-bold">譲</label>
-                    <input type="text" name="give_item" class="form-control">
-                </div>
-                <div class="col-6">
-                    <label class="small fw-bold">求</label>
-                    <input type="text" name="get_item" class="form-control">
-                </div>
-            </div>
-            <div class="mb-4">
-                <label class="small fw-bold">Status</label>
-                <select name="status" class="form-select">
-                    <option value="交渉中">交渉中</option>
-                    <option value="発送待ち">発送待ち</option>
-                    <option value="受取待ち">受取待ち</option>
-                    <option value="完了">完了</option>
-                </select>
-            </div>
-            <div class="mb-4">
-                <label class="small fw-bold">Memo</label>
-                <textarea name="memo" class="form-control" rows="3"></textarea>
-            </div>
+            <div class="mb-4"><label class="small fw-bold">Twitter ID</label><input type="text" name="partner_name" class="form-control" placeholder="@" required></div>
+            <div class="row mb-4"><div class="col-6"><label class="small fw-bold">譲</label><input type="text" name="give_item" class="form-control"></div><div class="col-6"><label class="small fw-bold">求</label><input type="text" name="get_item" class="form-control"></div></div>
+            <div class="mb-4"><label class="small fw-bold">Status</label><select name="status" class="form-select"><option value="交渉中">交渉中</option><option value="発送待ち">発送待ち</option><option value="受取待ち">受取待ち</option><option value="完了">完了</option></select></div>
+            <div class="mb-4"><label class="small fw-bold">Memo</label><textarea name="memo" class="form-control" rows="3"></textarea></div>
             <button type="submit" class="btn btn-primary mb-3">Save</button>
             <div class="text-center"><a href="/" class="small text-muted text-decoration-none">Back to list</a></div>
         </form>
