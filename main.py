@@ -9,7 +9,7 @@ from models import Trade
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# 起動時のテーブル作成（Vercelでも確実に動くように例外処理を追加）
+# 起動時にテーブルを作成
 @app.on_event("startup")
 async def startup():
     try:
