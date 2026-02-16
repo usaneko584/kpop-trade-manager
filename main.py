@@ -4,28 +4,28 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db, engine, Base
-from models import Trade  # ★さっき作った models.py を読み込みます
+from models import Trade 
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# 起動時にテーブルを作成する
+# 起動時のテーブル作成（Vercelでも確実に動くように例外処理を追加）
 @app.on_event("startup")
 async def startup():
-    print("★アプリを起動しています...")
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    print("★準備完了！")
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        print(f"Startup error: {e}")
 
 # --- 一覧画面 ---
 @app.get("/")
 async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
-    # IDの降順（新しい順）で表示
     result = await db.execute(select(Trade).order_by(Trade.id.desc()))
     trades = result.scalars().all()
     return templates.TemplateResponse("index.html", {"request": request, "trades": trades})
 
-# --- 新規登録画面 ---
+# --- 新規登録 ---
 @app.get("/create")
 async def show_create_form(request: Request):
     return templates.TemplateResponse("create.html", {"request": request})
@@ -44,14 +44,14 @@ async def create_trade(
     await db.commit()
     return RedirectResponse(url="/", status_code=303)
 
-# --- 詳細画面 ---
+# --- 詳細・編集 ---
 @app.get("/detail/{trade_id}")
 async def show_detail(trade_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Trade).where(Trade.id == trade_id))
     trade = result.scalars().first()
     return templates.TemplateResponse("detail.html", {"request": request, "trade": trade})
 
-# --- 更新処理 ---
+# --- 更新 ---
 @app.post("/update/{trade_id}")
 async def update_trade(
     trade_id: int,
@@ -75,7 +75,7 @@ async def update_trade(
         await db.commit()
     return RedirectResponse(url="/", status_code=303)
 
-# --- 削除処理 ---
+# --- 削除 ---
 @app.get("/delete/{trade_id}")
 async def delete_trade(trade_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Trade).where(Trade.id == trade_id))
