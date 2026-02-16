@@ -9,7 +9,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL is None:
     DATABASE_URL = ""
 
-# ★ここが重要！ test_connection.py にあった「完璧な変換ロジック」です
+# ★ここが復活させるべき「正解コード」です！
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL.startswith("postgresql://"):
