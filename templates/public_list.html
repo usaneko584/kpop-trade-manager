@@ -5,39 +5,9 @@
     <title>Wishlist - K-Trade</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { background-color: #fdf6f9; font-family: 'M PLUS Rounded 1c', sans-serif; }
-        .card { border: none; border-radius: 20px; box-shadow: 0 5px 15px rgba(255,182,193,0.1); }
-        .trade-img { width: 80px; height: 80px; object-fit: cover; border-radius: 15px; }
-        .header-title { color: #ff99aa; text-align: center; margin-top: 2rem; margin-bottom: 2rem; font-weight: bold; }
-    </style>
+    <style>body { background-color: #fdf6f9; font-family: 'M PLUS Rounded 1c', sans-serif; } .card { border: none; border-radius: 20px; box-shadow: 0 5px 15px rgba(255,182,193,0.1); } .trade-img { width: 80px; height: 80px; object-fit: cover; border-radius: 15px; } .header-title { color: #ff99aa; text-align: center; margin-top: 2rem; margin-bottom: 2rem; font-weight: bold; }</style>
 </head>
 <body>
-<div class="container pb-5">
-    <h1 class="header-title">🎀 Trade Wishlist</h1>
-    <div class="row">
-        {% for trade in trades %}
-        <div class="col-md-6 mb-4">
-            <div class="card p-3">
-                <div class="row g-0 align-items-center">
-                    <div class="col-6 text-center border-end">
-                        <p class="small fw-bold mb-1" style="color: #ff99aa;">譲 [GIVE]</p>
-                        {% if trade.give_image_url %}<img src="{{ trade.give_image_url }}" class="trade-img mb-2 shadow-sm">{% endif %}
-                        <p class="small mb-0 px-2">{{ trade.give_item or '-' }}</p>
-                    </div>
-                    <div class="col-6 text-center">
-                        <p class="small fw-bold mb-1" style="color: #00bfff;">求 [WISH]</p>
-                        {% if trade.get_image_url %}<img src="{{ trade.get_image_url }}" class="trade-img mb-2 shadow-sm">{% endif %}
-                        <p class="small mb-0 px-2">{{ trade.get_item or '-' }}</p>
-                    </div>
-                </div>
-                <div class="text-center mt-3"><span class="badge bg-light text-secondary rounded-pill px-3">{{ trade.status }}</span></div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12 text-center py-5"><p class="text-muted">現在、公開されている募集はありません💌</p></div>
-        {% endfor %}
-    </div>
-</div>
+<div class="container pb-5"><h1 class="header-title">🎀 Trade Wishlist</h1><div class="row">{% for trade in trades %}<div class="col-md-6 mb-4"><div class="card p-3"><div class="row g-0 align-items-center"><div class="col-6 text-center border-end"><p class="small fw-bold mb-1" style="color: #ff99aa;">譲 [GIVE]</p>{% if trade.give_image_url %}<img src="{{ trade.give_image_url }}" class="trade-img mb-2 shadow-sm">{% endif %}<p class="small mb-0 px-2">{{ trade.give_item or '-' }}</p></div><div class="col-6 text-center"><p class="small fw-bold mb-1" style="color: #00bfff;">求 [WISH]</p>{% if trade.get_image_url %}<img src="{{ trade.get_image_url }}" class="trade-img mb-2 shadow-sm">{% endif %}<p class="small mb-0 px-2">{{ trade.get_item or '-' }}</p></div></div><div class="text-center mt-3"><span class="badge bg-light text-secondary rounded-pill px-3">{{ trade.status }}</span></div></div></div>{% else %}<div class="col-12 text-center py-5"><p class="text-muted">現在、公開されている募集はありません💌</p></div>{% endfor %}</div><div class="text-center mt-4"><a href="/" class="small text-muted text-decoration-none">← ログイン画面へ</a></div></div>
 </body>
 </html>
