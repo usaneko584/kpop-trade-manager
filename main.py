@@ -11,7 +11,7 @@ from models import Trade
 
 app = FastAPI()
 
-# セッション設定（秘密鍵は適当な長い文字列に変えてください）
+# セッション設定
 app.add_middleware(SessionMiddleware, secret_key="rena_trading_secret_key")
 templates = Jinja2Templates(directory="templates")
 
@@ -38,11 +38,11 @@ async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
     if not user:
         return templates.TemplateResponse("login.html", {"request": request})
     
-    # ★自分の user_id のデータだけを取得
     result = await db.execute(
         select(Trade).where(Trade.user_id == user["user_id"]).order_by(Trade.id.desc())
     )
     trades = result.scalars().all()
+    # テンプレートにuser情報を渡す
     return templates.TemplateResponse("index.html", {"request": request, "trades": trades, "user": user})
 
 @app.get("/login")
@@ -62,8 +62,13 @@ async def callback(request: Request, code: str):
         headers = {"Authorization": f"Bearer {token_res.json()['access_token']}"}
         profile_res = await client.get("https://api.line.me/v2/profile", headers=headers)
         profile = profile_res.json()
-        # セッション保存
-        request.session["user"] = {"user_id": profile["userId"], "name": profile["displayName"]}
+        
+        # ★セッション保存（pictureUrlを画像として追加）
+        request.session["user"] = {
+            "user_id": profile["userId"], 
+            "name": profile["displayName"],
+            "picture": profile.get("pictureUrl") # 画像URLを保存
+        }
     return RedirectResponse(url="/")
 
 @app.get("/logout")
@@ -71,12 +76,13 @@ async def logout(request: Request):
     request.session.clear()
     return RedirectResponse(url="/")
 
-# --- 取引操作（すべて user_id を紐付け） ---
+# --- 取引操作 ---
 
 @app.get("/create")
 async def show_create(request: Request):
-    if not get_user(request): return RedirectResponse(url="/")
-    return templates.TemplateResponse("create.html", {"request": request})
+    user = get_user(request)
+    if not user: return RedirectResponse(url="/")
+    return templates.TemplateResponse("create.html", {"request": request, "user": user})
 
 @app.post("/create")
 async def create_trade(request: Request, partner_name: str = Form(...), give_item: str = Form(None), 
@@ -97,7 +103,7 @@ async def show_detail(trade_id: int, request: Request, db: AsyncSession = Depend
     if not user: return RedirectResponse(url="/")
     result = await db.execute(select(Trade).where(Trade.id == trade_id, Trade.user_id == user["user_id"]))
     trade = result.scalars().first()
-    return templates.TemplateResponse("detail.html", {"request": request, "trade": trade})
+    return templates.TemplateResponse("detail.html", {"request": request, "trade": trade, "user": user})
 
 @app.post("/update/{trade_id}")
 async def update_trade(trade_id: int, request: Request, partner_name: str = Form(...), 
