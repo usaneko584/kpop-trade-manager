@@ -20,7 +20,13 @@ async def startup():
 
 @app.get("/")
 async def read_root(request: Request, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Trade).order_by(Trade.id.desc()))
+    # 本来はここでログインユーザーのIDを取得します
+    current_user_id = "AさんのID" 
+
+    # ★ user_id が一致するものだけを検索（フィルタリング）
+    result = await db.execute(
+        select(Trade).where(Trade.user_id == current_user_id).order_by(Trade.id.desc())
+    )
     trades = result.scalars().all()
     return templates.TemplateResponse("index.html", {"request": request, "trades": trades})
 
