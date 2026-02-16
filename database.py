@@ -5,13 +5,16 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Vercelの環境変数からURLを取得
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# URLがない場合の安全策（空文字を入れる）
+# URLがない場合の安全策
 if DATABASE_URL is None:
     DATABASE_URL = ""
 
-# "postgres://" で始まっていたら "postgresql://" に直す（SQLAlchemy用）
+# ★ここが修正ポイント！
+# URLの先頭を「非同期用（postgresql+asyncpg://）」に強制的に書き換えます
 if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # エンジン作成
 engine = create_async_engine(
@@ -20,7 +23,7 @@ engine = create_async_engine(
     pool_pre_ping=True,
     connect_args={
         "command_timeout": 30,
-        "statement_cache_size": 0  # ★重要：Supabase(Port 6543)にはこれが必須
+        "statement_cache_size": 0  # Port 6543用
     }
 )
 
