@@ -7,19 +7,17 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background-color: #f8f9fa; }
-        .status-negotiating { color: #0d6efd; font-weight: bold; } /* 交渉中：青 */
-        .status-sending { color: #dc3545; font-weight: bold; }     /* 発送待ち：赤 */
-        .status-done { color: #198754; font-weight: bold; }        /* 完了：緑 */
+        .status-negotiating { color: #0d6efd; font-weight: bold; } /* 青 */
+        .status-sending { color: #dc3545; font-weight: bold; }     /* 赤 */
+        .status-done { color: #198754; font-weight: bold; }        /* 緑 */
     </style>
 </head>
 <body>
-
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>🐰 トレカ交換リスト</h1>
         <a href="/create" class="btn btn-primary">+ 新規登録</a>
     </div>
-
     <div class="row">
         {% for trade in trades %}
         <div class="col-md-6 mb-3">
@@ -27,14 +25,16 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title">{{ trade.partner_name }} 様</h5>
-                        <span class="status-negotiating">{{ trade.status }}</span>
+                        <span class="{% if trade.status == '交渉中' %}status-negotiating{% elif trade.status == '完了' %}status-done{% else %}status-sending{% endif %}">
+                            {{ trade.status }}
+                        </span>
                     </div>
                     <p class="card-text mb-1">
-                        <strong>譲:</strong> {{ trade.give_item }}<br>
-                        <strong>求:</strong> {{ trade.get_item }}
+                        <strong>譲:</strong> {{ trade.give_item or 'なし' }}<br>
+                        <strong>求:</strong> {{ trade.get_item or 'なし' }}
                     </p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <small class="text-muted">発送日: {{ trade.shipping_date or '未定' }}</small>
+                        <small class="text-muted">追跡: {{ trade.tracking_number or 'なし' }}</small>
                         <a href="/detail/{{ trade.id }}" class="btn btn-outline-secondary btn-sm">詳細を見る</a>
                     </div>
                 </div>
@@ -47,6 +47,5 @@
         {% endfor %}
     </div>
 </div>
-
 </body>
 </html>
