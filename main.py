@@ -92,14 +92,14 @@ async def create_trade(
     user = get_user(request)
     if not user: return RedirectResponse(url="/", status_code=303)
 
-    # 修正ポイント: インスタンス作成時に正しい引数形式で渡す
+    # 修正ポイント: 「trade.give_artist = ...」ではなく「項目名=値」で書く
     new_trade = Trade(
         user_id=user["user_id"],
         partner_name=partner_name,
-        ggive_artist=give_artist, # ここを修正
-        give_item=give_item,     # ここを修正
-        get_artist=get_artist,   # ここを修正
-        get_item=get_item,       # ここを修正
+        give_artist=give_artist,
+        give_item=give_item,
+        get_artist=get_artist,
+        get_item=get_item,
         status=status,
         memo=memo,
         is_public=(is_public == "true")
@@ -107,7 +107,7 @@ async def create_trade(
     db.add(new_trade)
     await db.commit()
     return RedirectResponse(url="/", status_code=303)
-
+    
 @app.get("/detail/{trade_id}")
 async def show_detail(trade_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     user = get_user(request)
