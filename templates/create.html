@@ -14,14 +14,15 @@
         <form action="/create" method="post" enctype="multipart/form-data">
             <div class="mb-4"><label class="small fw-bold">Twitter ID</label><input type="text" name="partner_name" class="form-control" placeholder="@" required></div>
            <div class="row mb-4">
-        <div class="col-6">
-            <label class="small fw-bold">譲アイテム画像</label>
-            <input type="file" name="give_file" class="form-control" accept="image/*">
-        </div>
-        <div class="col-6">
-            <label class="small fw-bold">求アイテム画像</label>
-            <input type="file" name="get_file" class="form-control" accept="image/*">
-        </div>
+    <div class="col-6">
+        <label class="small fw-bold">譲アイテム（詳細）</label>
+        <input type="text" name="give_item" class="form-control" placeholder="例：Wonbin (RIIZING Ver.)" value="{{ trade.give_item if trade else '' }}">
+    </div>
+    <div class="col-6">
+        <label class="small fw-bold">求アイテム（詳細）</label>
+        <input type="text" name="get_item" class="form-control" placeholder="例：Mark (シーグリ 特典)" value="{{ trade.get_item if trade else '' }}">
+    </div>
+</div>
     </div>
             <div class="mb-4"><label class="small fw-bold text-primary">🌍 公開設定</label><select name="is_public" class="form-select border-primary"><option value="false">自分だけが見る</option><option value="true">公開リストに載せる</option></select></div>
             <div class="mb-4"><label class="small fw-bold">Status</label><select name="status" class="form-select"><option value="交渉中">交渉中</option><option value="発送待ち">発送待ち</option><option value="受取待ち">受取待ち</option><option value="完了">完了</option></select></div>
