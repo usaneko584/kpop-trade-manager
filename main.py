@@ -32,7 +32,14 @@ async def read_root(request: Request, search: str = None, db: AsyncSession = Dep
     if not user: return templates.TemplateResponse("login.html", {"request": request})
     query = select(Trade).where(Trade.user_id == user["user_id"])
     if search:
-        query = query.where(or_(Trade.partner_name.contains(search), Trade.give_item.contains(search), Trade.get_item.contains(search)))
+        # アーティスト名でも検索できるように拡張
+        query = query.where(or_(
+            Trade.partner_name.contains(search), 
+            Trade.give_artist.contains(search),
+            Trade.get_artist.contains(search),
+            Trade.give_item.contains(search), 
+            Trade.get_item.contains(search)
+        ))
     result = await db.execute(query.order_by(Trade.id.desc()))
     trades = result.scalars().all()
     return templates.TemplateResponse("index.html", {"request": request, "trades": trades, "user": user, "search": search})
@@ -68,15 +75,15 @@ async def show_create(request: Request):
     if not user: return RedirectResponse(url="/")
     return templates.TemplateResponse("create.html", {"request": request, "user": user})
 
-# --- 新規登録 (ファイルアップロードを廃止) ---
+# --- 新規登録 ---
 @app.post("/create")
 async def create_trade(
     request: Request, 
     partner_name: str = Form(...), 
-    give_artist: str = Form(None), # ★追加
-    give_item: str = Form(None),   # 詳細
-    get_artist: str = Form(None),  # ★追加
-    get_item: str = Form(None),    # 詳細 
+    give_artist: str = Form(None), 
+    give_item: str = Form(None), 
+    get_artist: str = Form(None), 
+    get_item: str = Form(None), 
     status: str = Form(...), 
     memo: str = Form(None), 
     is_public: str = Form("false"), 
@@ -85,13 +92,14 @@ async def create_trade(
     user = get_user(request)
     if not user: return RedirectResponse(url="/", status_code=303)
 
+    # 修正ポイント: インスタンス作成時に正しい引数形式で渡す
     new_trade = Trade(
         user_id=user["user_id"],
         partner_name=partner_name,
-        trade.give_artist = give_artist
-        trade.give_item = give_item
-        trade.get_artist = get_artist
-        trade.get_item = get_item
+        give_artist=give_artist,
+        give_item=give_item,
+        get_artist=get_artist,
+        get_item=get_item,
         status=status,
         memo=memo,
         is_public=(is_public == "true")
@@ -108,17 +116,17 @@ async def show_detail(trade_id: int, request: Request, db: AsyncSession = Depend
     trade = result.scalars().first()
     return templates.TemplateResponse("detail.html", {"request": request, "trade": trade, "user": user})
 
-# --- 更新 (ファイルアップロードを廃止) ---
+# --- 更新 ---
 @app.post("/update/{trade_id}")
 async def update_trade(
     trade_id: int, 
     request: Request, 
     partner_name: str = Form(...), 
     status: str = Form(...),
-    give_artist: str = Form(None), # ★追加
-    give_item: str = Form(None),   # 詳細
-    get_artist: str = Form(None),  # ★追加
-    get_item: str = Form(None),    # 詳細
+    give_artist: str = Form(None), 
+    give_item: str = Form(None), 
+    get_artist: str = Form(None), 
+    get_item: str = Form(None), 
     tracking_number: str = Form(None),
     memo: str = Form(None),
     is_public: str = Form("false"),
