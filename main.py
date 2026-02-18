@@ -132,22 +132,39 @@ async def update_trade(
     request: Request, 
     partner_name: str = Form(...), 
     status: str = Form(...),
-    give_file: UploadFile = File(None), # ★ファイルとして受け取る
-    get_file: UploadFile = File(None),  # ★ファイルとして受け取る
+    give_item: str = Form(None), # ★追加
+    get_item: str = Form(None),  # ★追加
+    tracking_number: str = Form(None), # ★追加
+    memo: str = Form(None),      # ★追加
+    is_public: str = Form("false"),    # ★追加
+    give_file: UploadFile = File(None),
+    get_file: UploadFile = File(None),
     db: AsyncSession = Depends(get_db)
-    
+): # ← ここを閉じました！
     user = get_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+
     result = await db.execute(select(Trade).where(Trade.id == trade_id, Trade.user_id == user["user_id"]))
     trade = result.scalars().first()
+    
     if trade:
-        # 画像がアップロードされた場合の保存処理
-        for field, file in [("give_image_url", give_file), ("get_image_url", get_file)]:
+        # 文字列項目の更新
+        trade.partner_name = partner_name
+        trade.status = status
+        trade.give_item = give_item
+        trade.get_item = get_item
+        trade.tracking_number = tracking_number
+        trade.memo = memo
+        trade.is_public = (is_public == "true")
+
+        # 画像ファイルの保存処理
+        for attr, file in [("give_image_url", give_file), ("get_image_url", get_file)]:
             if file and file.filename:
-                file_path = f"static/uploads/{file.filename}"
                 os.makedirs("static/uploads", exist_ok=True)
+                file_path = f"static/uploads/{file.filename}"
                 with open(file_path, "wb") as buffer:
                     shutil.copyfileobj(file.file, buffer)
-                setattr(trade, field, f"/{file_path}") # DBにはパスを保存
+                setattr(trade, attr, f"/{file_path}")
         
         await db.commit()
     return RedirectResponse(url="/", status_code=303)
