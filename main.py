@@ -9,8 +9,6 @@ from sqlalchemy import or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_db, engine, Base
 from models import Trade
-from fastapi import UploadFile, File # ★追加
-import shutil
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="rena_kpop_manager_secure")
@@ -70,7 +68,7 @@ async def show_create(request: Request):
     if not user: return RedirectResponse(url="/")
     return templates.TemplateResponse("create.html", {"request": request, "user": user})
 
-# create_trade 関数を以下のように書き換えてください
+# --- 新規登録 (ファイルアップロードを廃止) ---
 @app.post("/create")
 async def create_trade(
     request: Request, 
@@ -79,43 +77,23 @@ async def create_trade(
     get_item: str = Form(None), 
     status: str = Form(...), 
     memo: str = Form(None), 
-    is_public: str = Form("false"), # 安全のために文字列で受け取る
-    give_file: UploadFile = File(None), # ★画像ファイルを受け取る
-    get_file: UploadFile = File(None),  # ★画像ファイルを受け取る
+    is_public: str = Form("false"), 
     db: AsyncSession = Depends(get_db)
 ):
     user = get_user(request)
-    if not user:
-        return RedirectResponse(url="/", status_code=303)
+    if not user: return RedirectResponse(url="/", status_code=303)
 
-    # 画像の保存用パス
-    image_paths = {"give": None, "get": None}
-
-    # アップロードされたファイルを保存
-    for key, file in [("give", give_file), ("get", get_file)]:
-        if file and file.filename:
-            os.makedirs("static/uploads", exist_ok=True)
-            file_path = f"static/uploads/{file.filename}"
-            with open(file_path, "wb") as buffer:
-                shutil.copyfileobj(file.file, buffer)
-            image_paths[key] = f"/{file_path}"
-
-    # 新しいトレカ情報をデータベースに作成
     new_trade = Trade(
         user_id=user["user_id"],
         partner_name=partner_name,
         give_item=give_item,
         get_item=get_item,
-        give_image_url=image_paths["give"], # 保存したパスを格納
-        get_image_url=image_paths["get"],   # 保存したパスを格納
         status=status,
         memo=memo,
         is_public=(is_public == "true")
     )
-    
     db.add(new_trade)
     await db.commit()
-    
     return RedirectResponse(url="/", status_code=303)
 
 @app.get("/detail/{trade_id}")
@@ -126,29 +104,25 @@ async def show_detail(trade_id: int, request: Request, db: AsyncSession = Depend
     trade = result.scalars().first()
     return templates.TemplateResponse("detail.html", {"request": request, "trade": trade, "user": user})
 
+# --- 更新 (ファイルアップロードを廃止) ---
 @app.post("/update/{trade_id}")
 async def update_trade(
     trade_id: int, 
     request: Request, 
     partner_name: str = Form(...), 
     status: str = Form(...),
-    give_item: str = Form(None), # ★追加
-    get_item: str = Form(None),  # ★追加
-    tracking_number: str = Form(None), # ★追加
-    memo: str = Form(None),      # ★追加
-    is_public: str = Form("false"),    # ★追加
-    give_file: UploadFile = File(None),
-    get_file: UploadFile = File(None),
+    give_item: str = Form(None),
+    get_item: str = Form(None),
+    tracking_number: str = Form(None),
+    memo: str = Form(None),
+    is_public: str = Form("false"),
     db: AsyncSession = Depends(get_db)
-): # ← ここを閉じました！
+):
     user = get_user(request)
-    if not user: return RedirectResponse(url="/", status_code=303)
-
     result = await db.execute(select(Trade).where(Trade.id == trade_id, Trade.user_id == user["user_id"]))
     trade = result.scalars().first()
     
     if trade:
-        # 文字列項目の更新
         trade.partner_name = partner_name
         trade.status = status
         trade.give_item = give_item
@@ -156,16 +130,6 @@ async def update_trade(
         trade.tracking_number = tracking_number
         trade.memo = memo
         trade.is_public = (is_public == "true")
-
-        # 画像ファイルの保存処理
-        for attr, file in [("give_image_url", give_file), ("get_image_url", get_file)]:
-            if file and file.filename:
-                os.makedirs("static/uploads", exist_ok=True)
-                file_path = f"static/uploads/{file.filename}"
-                with open(file_path, "wb") as buffer:
-                    shutil.copyfileobj(file.file, buffer)
-                setattr(trade, attr, f"/{file_path}")
-        
         await db.commit()
     return RedirectResponse(url="/", status_code=303)
 
