@@ -100,12 +100,6 @@ async def delete_trade(trade_id: int, request: Request, db: AsyncSession = Depen
         await db.delete(trade); await db.commit()
     return RedirectResponse(url="/", status_code=303)
 
-@app.get("/public/{user_id}")
-async def public_list(user_id: str, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Trade).where(Trade.user_id == user_id, Trade.is_public == True).order_by(Trade.id.desc()))
-    trades = result.scalars().all()
-    return templates.TemplateResponse("public_list.html", {"trades": trades})
-
 @app.get("/login")
 async def login_gate():
     url = f"https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id={LINE_CHANNEL_ID}&redirect_uri={LINE_REDIRECT_URI}&state=random_state&scope=profile%20openid"
