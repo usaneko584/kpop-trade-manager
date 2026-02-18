@@ -14,14 +14,23 @@
         <form action="/create" method="post" enctype="multipart/form-data">
             <div class="mb-4"><label class="small fw-bold">Twitter ID</label><input type="text" name="partner_name" class="form-control" placeholder="@" required></div>
            <div class="row mb-4">
-    <div class="col-6">
-        <label class="small fw-bold">譲アイテム（詳細）</label>
-        <input type="text" name="give_item" class="form-control" placeholder="例：Wonbin (RIIZING Ver.)" value="{{ trade.give_item if trade else '' }}">
-    </div>
-    <div class="col-6">
-        <label class="small fw-bold">求アイテム（詳細）</label>
-        <input type="text" name="get_item" class="form-control" placeholder="例：Mark (シーグリ 特典)" value="{{ trade.get_item if trade else '' }}">
-    </div>
+    <div class="mb-3">
+    <label class="small fw-bold" style="color: #ff99aa;">譲：アーティスト名</label>
+    <input type="text" name="give_artist" class="form-control" placeholder="例：Wonbin" value="{{ trade.give_artist or '' }}">
+</div>
+<div class="mb-3">
+    <label class="small fw-bold" style="color: #ff99aa;">譲：トレカ詳細</label>
+    <input type="text" name="give_item" class="form-control" placeholder="例：RIIZING Ver. B盤" value="{{ trade.give_item or '' }}">
+</div>
+
+<hr> <div class="mb-3">
+    <label class="small fw-bold" style="color: #00bfff;">求：アーティスト名</label>
+    <input type="text" name="get_artist" class="form-control" placeholder="例：Mark" value="{{ trade.get_artist or '' }}">
+</div>
+<div class="mb-3">
+    <label class="small fw-bold" style="color: #00bfff;">求：トレカ詳細</label>
+    <input type="text" name="get_item" class="form-control" placeholder="例：シーグリ 特典" value="{{ trade.get_item or '' }}">
+</div>
 </div>
     </div>
             <div class="mb-4"><label class="small fw-bold text-primary">🌍 公開設定</label><select name="is_public" class="form-select border-primary"><option value="false">自分だけが見る</option><option value="true">公開リストに載せる</option></select></div>
