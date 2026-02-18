@@ -8,9 +8,9 @@ class Trade(Base):
     user_id = Column(String, index=True, nullable=False) 
     partner_name = Column(String, nullable=False)
     status = Column(String, default="交渉中")
-    give_artist = Column(String) # ★追加
+    give_artist = Column(String) # ★ここを半角スペースのみで修正
     give_item = Column(String)
-    get_artist = Column(String) # ★追加
+    get_artist = Column(String) # ★ここを半角スペースのみで修正
     get_item = Column(String)
     give_image_url = Column(String, nullable=True)
     get_image_url = Column(String, nullable=True) 
