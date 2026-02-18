@@ -24,16 +24,16 @@
         </select>
     </div>
 
-    <div class="row mb-3">
-        <div class="col-6">
-            <label class="small fw-bold">譲アイテム画像</label>
-            <input type="file" name="give_file" class="form-control" accept="image/*">
-        </div>
-        <div class="col-6">
-            <label class="small fw-bold">求アイテム画像</label>
-            <input type="file" name="get_file" class="form-control" accept="image/*">
-        </div>
+   <div class="row mb-4">
+    <div class="col-6">
+        <label class="small fw-bold">譲アイテム（詳細）</label>
+        <input type="text" name="give_item" class="form-control" placeholder="例：Wonbin (RIIZING Ver.)" value="{{ trade.give_item if trade else '' }}">
     </div>
+    <div class="col-6">
+        <label class="small fw-bold">求アイテム（詳細）</label>
+        <input type="text" name="get_item" class="form-control" placeholder="例：Mark (シーグリ 特典)" value="{{ trade.get_item if trade else '' }}">
+    </div>
+</div>
 
     <div class="row mb-3">
         <div class="col-6"><label class="small fw-bold text-primary">🌍 公開</label>
