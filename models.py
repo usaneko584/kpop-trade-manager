@@ -8,11 +8,13 @@ class Trade(Base):
     user_id = Column(String, index=True, nullable=False) 
     partner_name = Column(String, nullable=False)
     status = Column(String, default="交渉中")
-　　give_artist = Column(String) # ★追加
-    give_item = Column(String)   # これは「詳細」として使います
-    get_artist = Column(String)  # ★追加
-    get_item = Column(String)    # これは「詳細」として使います
-    is_public = Column(Boolean, default=False)      # ★公開フラグ
+    give_artist = Column(String) # ★追加
+    give_item = Column(String)
+    get_artist = Column(String) # ★追加
+    get_item = Column(String)
+    give_image_url = Column(String, nullable=True)
+    get_image_url = Column(String, nullable=True) 
+    is_public = Column(Boolean, default=False) 
     shipping_date = Column(Date, nullable=True)
     tracking_number = Column(String, nullable=True)
     memo = Column(Text, nullable=True)
