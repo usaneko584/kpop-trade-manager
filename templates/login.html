@@ -2,12 +2,83 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - K-Trade</title>
+    <title>Login - K-Life</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
-    <style>body { background-color: #fdf6f9; font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; } .login-card { background: white; padding: 3rem; border-radius: 30px; box-shadow: 0 10px 30px rgba(255,182,193,0.2); text-align: center; } .line-btn { background-color: #06C755; color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 20px; }</style>
+    <style>
+        body { 
+            background-color: #fdf6f9; 
+            font-family: 'M PLUS Rounded 1c', sans-serif; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0;
+        }
+        .login-card { 
+            background: white; 
+            padding: 3.5rem 2rem; 
+            border-radius: 40px; 
+            box-shadow: 0 15px 35px rgba(255,182,193,0.2); 
+            text-align: center; 
+            width: 100%;
+            max-width: 400px;
+        }
+        .line-btn { 
+            background-color: #06C755; 
+            color: white; 
+            padding: 14px 40px; 
+            border-radius: 35px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            display: inline-block; 
+            margin-top: 25px; 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .line-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 199, 85, 0.3);
+        }
+        .footer-links {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed #ffb6c1;
+        }
+        .footer-links a {
+            color: #ffb6c1;
+            text-decoration: none;
+            font-size: 0.75rem;
+            margin: 0 8px;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: #ff99aa;
+        }
+    </style>
 </head>
 <body>
-    <div class="login-card"><h1 style="color: #ff99aa;">🎀 K-Trade List</h1><p class="text-muted">LINEログインして自分だけの<br>トレカ管理リストを作ろう☁️</p><a href="/login" class="line-btn">LINEでログイン</a></div>
+    <div class="login-card">
+        <h1 style="color: #ff99aa; font-weight: bold; margin-bottom: 1rem;">🎀 K-Life</h1>
+        <p class="text-muted small" style="line-height: 1.6;">
+            推し活をもっとスマートに。<br>
+            自分だけのトレカ交換管理リスト☁️
+        </p>
+        
+        <a href="/login" class="line-btn">
+            <i class="bi bi-line me-2"></i>LINEでログイン
+        </a>
+
+        <div class="footer-links">
+            <a href="/about">About</a>
+            <span style="color: #ffe4ed;">|</span>
+            <a href="/terms">Terms & Privacy</a>
+            <span style="color: #ffe4ed;">|</span>
+            <a href="https://x.com/k_life22914" target="_blank">Contact</a>
+        </div>
+        <p class="mt-3" style="font-size: 0.65rem; color: #ffb6c1;">&copy; 2026 K-Life</p>
+    </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </body>
 </html>
