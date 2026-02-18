@@ -46,9 +46,55 @@
     <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
     <div class="text-center"><a href="/" class="small text-muted text-decoration-none">Back</a></div>
 </form>
-        <div class="template-box mt-4"><h6 class="fw-bold mb-2 small" style="color: #ff99aa;">🎀 Shipping Template</h6><textarea id="tempText" class="form-control border-0 bg-white small mb-2" rows="3" readonly>お世話になっております、{{ user.name }}です。本日発送いたしました。追跡番号：{{ trade.tracking_number or '未入力' }} 無事に届きますように💌</textarea><button onclick="copyMsg()" class="btn btn-sm btn-outline-secondary w-100 rounded-pill">Copy Message</button></div>
+        <div class="template-box mt-4">
+    <h6 class="fw-bold mb-2 small" style="color: #ff99aa;">🎀 Shipping Template</h6>
+    
+    <textarea id="tempText" class="form-control border-0 bg-white small mb-2" rows="4">お世話になっております、{{ user.name }}です。本日発送いたしました。
+追跡番号：{{ trade.tracking_number or 'なし' }}
+無事に届きますように💌</textarea>
+
+    <div class="d-flex gap-2">
+        <button onclick="copyMsg()" class="btn btn-sm btn-primary flex-grow-1 rounded-pill">
+            Copy Message
+        </button>
+        <button onclick="saveTemplate()" class="btn btn-sm btn-outline-secondary rounded-pill px-3" title="この文面をデフォルトにする">
+            <i class="bi bi-save"></i> 保存
+        </button>
     </div>
+    <p class="text-center mt-2 mb-0" style="font-size: 0.6rem; color: #ffb6c1;">※「保存」すると、次回からこの文面が自動で表示されます✨</p>
 </div>
-<script>function copyMsg(){var t=document.getElementById("tempText");t.select(),navigator.clipboard.writeText(t.value),alert("コピーしました💌")}</script>
+
+<script>
+// ページ読み込み時に保存されたテンプレがあれば反映する
+window.onload = function() {
+    const savedTemp = localStorage.getItem('k_life_shipping_msg');
+    if (savedTemp) {
+        // 保存された文面内の [NAME] や [NUMBER] を実際の値に置換して表示
+        let msg = savedTemp
+            .replace('{NAME}', '{{ user.name }}')
+            .replace('{NUMBER}', '{{ trade.tracking_number or "なし" }}');
+        document.getElementById("tempText").value = msg;
+    }
+}
+
+// 編集した文面を「型」として保存する
+function saveTemplate() {
+    let currentMsg = document.getElementById("tempText").value;
+    // ユーザー名や番号の部分を、次回使い回せるようにプレースホルダーに戻して保存
+    let templateToSave = currentMsg
+        .replace('{{ user.name }}', '{NAME}')
+        .replace('{{ trade.tracking_number or "なし" }}', '{NUMBER}');
+    
+    localStorage.setItem('k_life_shipping_msg', templateToSave);
+    alert("この文面をデフォルトとして保存しました！💖");
+}
+
+function copyMsg(){
+    var t = document.getElementById("tempText");
+    t.select();
+    navigator.clipboard.writeText(t.value);
+    alert("コピーしました💌");
+}
+</script>
 </body>
 </html>
