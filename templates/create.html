@@ -1,38 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Trade - K-Life</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 背景：控えめなドットで韓国カフェ風に */
+        body { 
+            background-color: #fdf6f9; 
+            background-image: radial-gradient(#ffb6c1 0.5px, transparent 0.5px); 
+            background-size: 24px 24px;
+            font-family: 'M PLUS Rounded 1c', sans-serif; 
+            color: #5e5e5e; 
+        }
+
+        /* フォーム：グラスモーフィズムで透明感と高級感を */
+        .form-container { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px);
+            padding: 2.5rem; 
+            border-radius: 35px; 
+            border: 1px solid #ffffff;
+            box-shadow: 0 15px 35px rgba(255,182,193,0.2); 
+        }
+
+        /* ラベル：ステッカー風の可愛さ */
+        .label-give { 
+            background-color: #ffe4ed; color: #ff99aa; 
+            padding: 2px 12px; border-radius: 12px; font-size: 0.8rem;
+        }
+        .label-get { 
+            background-color: #e0f7ff; color: #00bfff; 
+            padding: 2px 12px; border-radius: 12px; font-size: 0.8rem;
+        }
+
+        .form-control, .form-select { 
+            border-radius: 18px; 
+            border: 1px solid #ffe4ed; 
+            padding: 12px; 
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .form-control:focus {
+            border-color: #ffb6c1;
+            box-shadow: 0 0 0 0.25rem rgba(255, 182, 193, 0.25);
+        }
+
+        /* 保存ボタン：キャンディのような艶感 */
+        .btn-primary { 
+            background: linear-gradient(135deg, #ffb6c1 0%, #ff99aa 100%); 
+            border: none; 
+            border-radius: 25px; 
+            padding: 12px; 
+            font-weight: bold; 
+            width: 100%; 
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.4);
+            transition: transform 0.2s ease;
+        }
+        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.05); }
+
+        hr { border-top: 1px dashed #ffb6c1; opacity: 0.5; }
+    </style>
+</head>
+<body>
 <div class="container py-5" style="max-width: 500px;">
     <div class="form-container">
         <h3 class="h5 fw-bold mb-4 text-center" style="color: #ff99aa;">💌 New Trade</h3>
-        <form action="/create" method="post" enctype="multipart/form-data">
+        
+        <form action="/create" method="post">
             <div class="mb-4">
-                <label class="small fw-bold">Twitter ID</label>
+                <label class="small fw-bold mb-2">Twitter ID</label>
                 <input type="text" name="partner_name" class="form-control" placeholder="@" required>
             </div>
 
             <div class="row mb-4">
                 <div class="mb-3">
-                    <label class="small fw-bold" style="color: #ff99aa;">譲：アーティスト名</label>
+                    <label class="label-give fw-bold mb-2">譲：アーティスト名</label>
                     <input type="text" name="give_artist" class="form-control" placeholder="例：Wonbin">
                 </div>
                 <div class="mb-3">
-                    <label class="small fw-bold" style="color: #ff99aa;">譲：トレカ詳細</label>
+                    <label class="small fw-bold mb-2 text-muted">譲：トレカ詳細</label>
                     <input type="text" name="give_item" class="form-control" placeholder="例：RIIZING Ver. B盤">
                 </div>
 
-                <hr>
+                <hr class="my-4">
 
                 <div class="mb-3">
-                    <label class="small fw-bold" style="color: #00bfff;">求：アーティスト名</label>
+                    <label class="label-get fw-bold mb-2">求：アーティスト名</label>
                     <input type="text" name="get_artist" class="form-control" placeholder="例：Mark">
                 </div>
                 <div class="mb-3">
-                    <label class="small fw-bold" style="color: #00bfff;">求：トレカ詳細</label>
+                    <label class="small fw-bold mb-2 text-muted">求：トレカ詳細</label>
                     <input type="text" name="get_item" class="form-control" placeholder="例：シーグリ 特典">
                 </div>
             </div>
 
-            
-
             <div class="mb-4">
-                <label class="small fw-bold">Status</label>
+                <label class="small fw-bold mb-2">Status</label>
                 <select name="status" class="form-select">
                     <option value="交渉中">交渉中</option>
                     <option value="発送待ち">発送待ち</option>
@@ -44,4 +108,7 @@
             <button type="submit" class="btn btn-primary mb-3">Save</button>
             <div class="text-center"><a href="/" class="small text-muted text-decoration-none">Back</a></div>
         </form>
-    </div> </div>
+    </div>
+</div>
+</body>
+</html>
