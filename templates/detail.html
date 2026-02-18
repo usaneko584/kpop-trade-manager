@@ -11,7 +11,7 @@
 <div class="container py-5" style="max-width: 500px;">
     <div class="form-container">
         <div class="d-flex justify-content-between mb-4"><h3 class="h5 fw-bold m-0" style="color: #ff99aa;">📝 Edit</h3><a href="/delete/{{ trade.id }}" class="text-danger small text-decoration-none" onclick="return confirm('削除しますか？');">Delete</a></div>
-        <form action="/update/{{ trade.id }}" method="post">
+        <form action="/update/{{ trade.id }}" method="post" enctype="multipart/form-data">
     <div class="mb-3"><label class="small fw-bold">Twitter ID</label><input type="text" name="partner_name" class="form-control" value="{{ trade.partner_name }}"></div>
     
     <div class="mb-3">
@@ -25,12 +25,14 @@
     </div>
 
     <div class="row mb-3">
-        <div class="col-6"><label class="small fw-bold">譲アイテム</label><input type="text" name="give_item" class="form-control" value="{{ trade.give_item or '' }}"></div>
-        <div class="col-6"><label class="small fw-bold">画像URL</label><input type="text" name="give_image_url" class="form-control" value="{{ trade.give_image_url or '' }}"></div>
-    </div>
-    <div class="row mb-3">
-        <div class="col-6"><label class="small fw-bold">求アイテム</label><input type="text" name="get_item" class="form-control" value="{{ trade.get_item or '' }}"></div>
-        <div class="col-6"><label class="small fw-bold">画像URL</label><input type="text" name="get_image_url" class="form-control" value="{{ trade.get_image_url or '' }}"></div>
+        <div class="col-6">
+            <label class="small fw-bold">譲アイテム画像</label>
+            <input type="file" name="give_file" class="form-control" accept="image/*">
+        </div>
+        <div class="col-6">
+            <label class="small fw-bold">求アイテム画像</label>
+            <input type="file" name="get_file" class="form-control" accept="image/*">
+        </div>
     </div>
 
     <div class="row mb-3">
