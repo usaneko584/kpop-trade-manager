@@ -12,13 +12,40 @@
     <div class="form-container">
         <div class="d-flex justify-content-between mb-4"><h3 class="h5 fw-bold m-0" style="color: #ff99aa;">📝 Edit</h3><a href="/delete/{{ trade.id }}" class="text-danger small text-decoration-none" onclick="return confirm('削除しますか？');">Delete</a></div>
         <form action="/update/{{ trade.id }}" method="post">
-            <div class="mb-3"><label class="small fw-bold">Twitter ID</label><input type="text" name="partner_name" class="form-control" value="{{ trade.partner_name }}"></div>
-            <div class="row mb-3"><div class="col-6"><label class="small fw-bold">譲アイテム</label><input type="text" name="give_item" class="form-control" value="{{ trade.give_item or '' }}"></div><div class="col-6"><label class="small fw-bold">画像URL</label><input type="text" name="give_image_url" class="form-control" value="{{ trade.give_image_url or '' }}"></div></div>
-            <div class="row mb-3"><div class="col-6"><label class="small fw-bold">求アイテム</label><input type="text" name="get_item" class="form-control" value="{{ trade.get_item or '' }}"></div><div class="col-6"><label class="small fw-bold">画像URL</label><input type="text" name="get_image_url" class="form-control" value="{{ trade.get_image_url or '' }}"></div></div>
-            <div class="row mb-3"><div class="col-6"><label class="small fw-bold text-primary">🌍 公開</label><select name="is_public" class="form-select border-primary"><option value="false" {% if not trade.is_public %}selected{% endif %}>非公開</option><option value="true" {% if trade.is_public %}selected{% endif %}>公開中</option></select></div><div class="col-6"><label class="small fw-bold">追跡番号</label><input type="text" name="tracking_number" class="form-control" value="{{ trade.tracking_number or '' }}"></div></div>
-            <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
-            <div class="text-center"><a href="/" class="small text-muted text-decoration-none">Back</a></div>
-        </form>
+    <div class="mb-3"><label class="small fw-bold">Twitter ID</label><input type="text" name="partner_name" class="form-control" value="{{ trade.partner_name }}"></div>
+    
+    <div class="mb-3">
+        <label class="small fw-bold">Status (状況)</label>
+        <select name="status" class="form-select">
+            <option value="交渉中" {% if trade.status == '交渉中' %}selected{% endif %}>交渉中</option>
+            <option value="発送待ち" {% if trade.status == '発送待ち' %}selected{% endif %}>発送待ち</option>
+            <option value="受取待ち" {% if trade.status == '受取待ち' %}selected{% endif %}>受取待ち</option>
+            <option value="完了" {% if trade.status == '完了' %}selected{% endif %}>完了</option>
+        </select>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-6"><label class="small fw-bold">譲アイテム</label><input type="text" name="give_item" class="form-control" value="{{ trade.give_item or '' }}"></div>
+        <div class="col-6"><label class="small fw-bold">画像URL</label><input type="text" name="give_image_url" class="form-control" value="{{ trade.give_image_url or '' }}"></div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-6"><label class="small fw-bold">求アイテム</label><input type="text" name="get_item" class="form-control" value="{{ trade.get_item or '' }}"></div>
+        <div class="col-6"><label class="small fw-bold">画像URL</label><input type="text" name="get_image_url" class="form-control" value="{{ trade.get_image_url or '' }}"></div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-6"><label class="small fw-bold text-primary">🌍 公開</label>
+            <select name="is_public" class="form-select border-primary">
+                <option value="false" {% if not trade.is_public %}selected{% endif %}>非公開</option>
+                <option value="true" {% if trade.is_public %}selected{% endif %}>公開中</option>
+            </select>
+        </div>
+        <div class="col-6"><label class="small fw-bold">追跡番号</label><input type="text" name="tracking_number" class="form-control" value="{{ trade.tracking_number or '' }}"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-3">Save Changes</button>
+    <div class="text-center"><a href="/" class="small text-muted text-decoration-none">Back</a></div>
+</form>
         <div class="template-box mt-4"><h6 class="fw-bold mb-2 small" style="color: #ff99aa;">🎀 Shipping Template</h6><textarea id="tempText" class="form-control border-0 bg-white small mb-2" rows="3" readonly>お世話になっております、{{ user.name }}です。本日発送いたしました。追跡番号：{{ trade.tracking_number or '未入力' }} 無事に届きますように💌</textarea><button onclick="copyMsg()" class="btn btn-sm btn-outline-secondary w-100 rounded-pill">Copy Message</button></div>
     </div>
 </div>
