@@ -96,10 +96,10 @@ async def create_trade(
     new_trade = Trade(
         user_id=user["user_id"],
         partner_name=partner_name,
-        give_artist=give_artist,
-        give_item=give_item,
-        get_artist=get_artist,
-        get_item=get_item,
+        ggive_artist=give_artist, # ここを修正
+        give_item=give_item,     # ここを修正
+        get_artist=get_artist,   # ここを修正
+        get_item=get_item,       # ここを修正
         status=status,
         memo=memo,
         is_public=(is_public == "true")
