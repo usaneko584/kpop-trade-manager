@@ -23,7 +23,6 @@
     <div class="container">
         <span class="navbar-brand h1" style="color: #ff99aa;">🎀 My Trade List</span>
         <div class="d-flex align-items-center">
-            <button onclick="copyPublicLink()" class="btn btn-sm btn-outline-primary rounded-pill me-3" style="font-size: 0.7rem;">公開リンクをコピー</button>
             <div class="user-info d-flex align-items-center me-2">
                 {% if user.picture %}<img src="{{ user.picture }}" class="user-img">{% endif %}
                 <span class="small fw-bold">{{ user.name }}</span>
@@ -91,12 +90,5 @@
     </footer>
 </div>
 
-<script>
-function copyPublicLink(){
-    const url=window.location.origin+"/public/{{ user.user_id }}";
-    navigator.clipboard.writeText(url);
-    alert("公開用リストのURLをコピーしました！💌")
-}
-</script>
 </body>
 </html>
