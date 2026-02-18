@@ -44,13 +44,7 @@
 </div>
 </div>
 
-    <div class="row mb-3">
-        <div class="col-6"><label class="small fw-bold text-primary">🌍 公開</label>
-            <select name="is_public" class="form-select border-primary">
-                <option value="false" {% if not trade.is_public %}selected{% endif %}>非公開</option>
-                <option value="true" {% if trade.is_public %}selected{% endif %}>公開中</option>
-            </select>
-        </div>
+    
         <div class="col-6"><label class="small fw-bold">追跡番号</label><input type="text" name="tracking_number" class="form-control" value="{{ trade.tracking_number or '' }}"></div>
     </div>
 
