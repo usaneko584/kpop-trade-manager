@@ -73,8 +73,10 @@ async def show_create(request: Request):
 async def create_trade(
     request: Request, 
     partner_name: str = Form(...), 
-    give_item: str = Form(None), 
-    get_item: str = Form(None), 
+    give_artist: str = Form(None), # ★追加
+    give_item: str = Form(None),   # 詳細
+    get_artist: str = Form(None),  # ★追加
+    get_item: str = Form(None),    # 詳細 
     status: str = Form(...), 
     memo: str = Form(None), 
     is_public: str = Form("false"), 
@@ -86,8 +88,10 @@ async def create_trade(
     new_trade = Trade(
         user_id=user["user_id"],
         partner_name=partner_name,
-        give_item=give_item,
-        get_item=get_item,
+        trade.give_artist = give_artist
+        trade.give_item = give_item
+        trade.get_artist = get_artist
+        trade.get_item = get_item
         status=status,
         memo=memo,
         is_public=(is_public == "true")
@@ -111,8 +115,10 @@ async def update_trade(
     request: Request, 
     partner_name: str = Form(...), 
     status: str = Form(...),
-    give_item: str = Form(None),
-    get_item: str = Form(None),
+    give_artist: str = Form(None), # ★追加
+    give_item: str = Form(None),   # 詳細
+    get_artist: str = Form(None),  # ★追加
+    get_item: str = Form(None),    # 詳細
     tracking_number: str = Form(None),
     memo: str = Form(None),
     is_public: str = Form("false"),
@@ -125,7 +131,9 @@ async def update_trade(
     if trade:
         trade.partner_name = partner_name
         trade.status = status
+        trade.give_artist = give_artist
         trade.give_item = give_item
+        trade.get_artist = get_artist
         trade.get_item = get_item
         trade.tracking_number = tracking_number
         trade.memo = memo
